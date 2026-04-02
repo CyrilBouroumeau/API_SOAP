@@ -1,0 +1,158 @@
+function mapRowToShipment(row) {
+    return {
+        barcodeRequestEmail: row.BarcodeEmail || process.env.DEFAULT_BARCODE_EMAIL,
+
+        shipperAddress: {
+            contactName: "",
+            contactPhone: "",
+            contactEmail: "",
+            name1: row.ShipperName,
+            name2: "",
+            customerAddressIdentifier: "",
+            vatNo: "",
+            customsId: "",
+            email: row.ShipperEmail || "",
+            fax: "",
+            locationType: "PHYSICAL",
+            mobilePhone: "",
+            personType: "COMPANY",
+            phone: row.ShipperPhone || "",
+            poBox: "",
+            postalCode: row.ShipperPostalCode,
+            stateCode: "",
+            stateName: "",
+            preferredLanguage: "",
+            schenkerAddressId: "",
+            schenkerAddressIdentifierType: "",
+            schenkerAddressIdentifierValue: "",
+            street: row.ShipperStreet,
+            street2: row.ShipperStreet2 || "",
+            city: row.ShipperCity,
+            countryCode: row.ShipperCountryCode || "FR",
+            type: "SHIPPER"
+        },
+
+        deliveryAddress: {
+            contactName: "",
+            contactPhone: "",
+            contactEmail: "",
+            name1: row.DeliveryName,
+            name2: "",
+            customerAddressIdentifier: "",
+            vatNo: row.DeliveryVatNo || "",
+            customsId: row.DeliveryCustomsId || "",
+            email: row.DeliveryEmail || "",
+            fax: "",
+            locationType: "PHYSICAL",
+            mobilePhone: "",
+            personType: "COMPANY",
+            phone: row.DeliveryPhone || "",
+            poBox: "",
+            postalCode: row.DeliveryPostalCode,
+            stateCode: "",
+            stateName: "",
+            preferredLanguage: "",
+            schenkerAddressId: "",
+            schenkerAddressIdentifierType: "DELIVERY",
+            schenkerAddressIdentifierValue: "",
+            street: row.DeliveryStreet,
+            street2: row.DeliveryStreet2 || "",
+            city: row.DeliveryCity,
+            countryCode: row.DeliveryCountryCode || "FR",
+            type: "DELIVERY"
+        },
+
+        incoterm: "EXW",
+        incotermLocation: row.IncotermLocation || "",
+        productCode: "43",
+        productOption: "",
+        measurementType: "METRIC",
+        customsClearance: false,
+        grossWeight: row.GrossWeight || 0,
+        indoorDelivery: false,
+        pickUpDateFrom: row.PickupDateFrom,
+        pickUpDateTo: row.PickupDateTo,
+        referenceNumber: row.BLNumber,
+        neutralShipping: false,
+        specialCargo: false,
+        valueOfGoods: row.ValueOfGoods || 0,
+        valueOfGoodsCurrency: "EUR",
+        ecoNeutral: true,
+        serviceType: "D2D",
+        dgr: false,
+        cargoDesc: row.CargoDesc || "Expedition",
+        volume: row.Volume || 0,
+        marksAndNumbers: "",
+        packageType: "pk",
+        pieces: row.Pieces || 1,
+        stackable: true,
+        express: false,
+        foodRelated: false,
+        heatedTransport: false,
+        homeDelivery: false,
+        measureUnit: "PIECES",
+        ownPickup: false,
+        pharmaceuticals: false
+    };
+}
+
+   /*
+          <barcodeRequestEmail>
+            <email>${esc(shipment.barcodeRequestEmail)}</email>
+          </barcodeRequestEmail>
+
+          ${buildAddressXml(shipment.shipperAddress)}
+          ${buildAddressXml(shipment.deliveryAddress)}
+
+          <incoterm>${esc(shipment.incoterm || "EXW")}</incoterm>
+          <incotermLocation>${esc(shipment.incotermLocation || "")}</incotermLocation>
+          <productCode>${esc(shipment.productCode || "43")}</productCode>
+          <productOption>${esc(shipment.productOption || "")}</productOption>
+          <measurementType>${esc(shipment.measurementType || "METRIC")}</measurementType>
+          <customsClearance>${boolXml(!!shipment.customsClearance)}</customsClearance>
+          <grossWeight>${esc(shipment.grossWeight || 0)}</grossWeight>
+          <indoorDelivery>${boolXml(!!shipment.indoorDelivery)}</indoorDelivery>
+
+          <pickupDates>
+            <pickUpDateFrom>${esc(shipment.pickUpDateFrom)}</pickUpDateFrom>
+            <pickUpDateTo>${esc(shipment.pickUpDateTo)}</pickUpDateTo>
+          </pickupDates>
+
+          <reference>
+            <number>${esc(shipment.referenceNumber)}</number>
+            <id>DELIVERY_ORDER_NUMBER</id>
+          </reference>
+
+          <neutralShipping>${boolXml(!!shipment.neutralShipping)}</neutralShipping>
+          <specialCargo>${boolXml(!!shipment.specialCargo)}</specialCargo>
+
+          <valueOfGoods>
+            <value>${esc(shipment.valueOfGoods || 0)}</value>
+            <currency>${esc(shipment.valueOfGoodsCurrency || "EUR")}</currency>
+          </valueOfGoods>
+
+          <ecoNeutral>${boolXml(!!shipment.ecoNeutral)}</ecoNeutral>
+          <serviceType>${esc(shipment.serviceType || "D2D")}</serviceType>
+
+          <shippingInformation>
+            <shipmentPosition>
+              <dgr>${boolXml(!!shipment.dgr)}</dgr>
+              <cargoDesc>${esc(shipment.cargoDesc || "")}</cargoDesc>
+              <volume>${esc(shipment.volume || 0)}</volume>
+              <grossWeight>${esc(shipment.grossWeight || 0)}</grossWeight>
+              <marksAndNumbers>${esc(shipment.marksAndNumbers || "")}</marksAndNumbers>
+              <packageType>${esc(shipment.packageType || "pk")}</packageType>
+              <pieces>${esc(shipment.pieces || 1)}</pieces>
+              <stackable>${boolXml(!!shipment.stackable)}</stackable>
+            </shipmentPosition>
+            <grossWeight>${esc(shipment.grossWeight || 0)}</grossWeight>
+            <volume>${esc(shipment.volume || 0)}</volume>
+          </shippingInformation>
+
+          <express>${boolXml(!!shipment.express)}</express>
+          <foodRelated>${boolXml(!!shipment.foodRelated)}</foodRelated>
+          <heatedTransport>${boolXml(!!shipment.heatedTransport)}</heatedTransport>
+          <homeDelivery>${boolXml(!!shipment.homeDelivery)}</homeDelivery>
+          <measureUnit>${esc(shipment.measureUnit || "PIECES")}</measureUnit>
+          <ownPickup>${boolXml(!!shipment.ownPickup)}</ownPickup>
+          <pharmaceuticals>${boolXml(!!shipment.pharmaceuticals)}</pharmaceuticals>*/

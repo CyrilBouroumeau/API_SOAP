@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/Éléments de solution/" />
+  <Project Path="API_CB/API_CB.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+</Solution>

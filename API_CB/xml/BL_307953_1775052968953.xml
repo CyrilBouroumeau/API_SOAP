@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://www.schenker.com/Booking/v1_1">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <v1:getBookingRequestLand>
+      <in>
+        <applicationArea>
+          <accessKey>ba6e6e17-f791-44ff-9e79-c87b5f1c3c43</accessKey>
+          <groupId>2171423</groupId>
+        </applicationArea>
+        <bookingLand submitBooking="false">
+          <barcodeRequest start_pos="1" separated="false" directThermalMedia="false">A6</barcodeRequest>
+          <address>
+            <name1>NORDLINGER PRO</name1>
+            <locationType>PHYSICAL</locationType>
+            <mobilePhone/>
+            <personType>COMPANY</personType>
+            <phone>+33545781999</phone>
+            <postalCode>16300</postalCode>
+            <schenkerAddressId>162050</schenkerAddressId>
+            <street>CS 20001 - RN 10</street>
+            <street2/>
+            <city>VIGNOLLES</city>
+            <countryCode>FRA</countryCode>
+            <type>SHIPPER</type>
+          </address>
+          <address>
+            <name1>CASTORAMA FRANCE SA PIERRELAYE</name1>
+            <email>reception.pierrelaye@castorama.fr</email>
+            <locationType>PHYSICAL</locationType>
+            <mobilePhone> </mobilePhone>
+            <personType>COMPANY</personType>
+            <phone>+33139094343</phone>
+            <postalCode>95220</postalCode>
+            <street>RD14 AVENUE GENERAL LECLERC</street>
+            <street2>N° 2358</street2>
+            <city>PIERRELAYE</city>
+            <countryCode>FR</countryCode>
+            <type>CONSIGNEE</type>
+          </address>
+          <incoterm>DAP</incoterm>
+          <incotermLocation>PIERRELAYE</incotermLocation>
+          <productCode>43</productCode>
+          <measurementType>METRIC</measurementType>
+          <customsClearance>false</customsClearance>
+          <customsClearanceEu>false</customsClearanceEu>
+          <grossWeight>52.33</grossWeight>
+          <indoorDelivery>false</indoorDelivery>
+          <pickupDates>
+            <pickUpDateFrom>2026-03-30T00:00:00.000+00:00</pickUpDateFrom>
+            <pickUpDateTo>2026-03-30T00:00:00.000+00:00</pickUpDateTo>
+          </pickupDates>
+          <reference>
+            <number>307953</number>
+            <id>SHIPPER_REFERENCE_NUMBER</id>
+          </reference>
+          <reference>
+            <number>317662</number>
+            <id>CONSIGNEE_REFERENCE_NUMBER</id>
+          </reference>
+          <reference>
+            <number>307069</number>
+            <id>SHIPPER_REFERENCE_NUMBER</id>
+          </reference>
+          <reference>
+            <number>PBRIC</number>
+            <id>SHIPPER_REFERENCE_NUMBER</id>
+          </reference>
+          <handlingInstructions>SANS RDV NI ANNONCE MERCREDI</handlingInstructions>
+          <neutralShipping>false</neutralShipping>
+          <specialCargo>false</specialCargo>
+          <ecoNeutral>false</ecoNeutral>
+          <serviceType>D2D</serviceType>
+          <shippingInformation>
+            <shipmentPosition>
+              <dgr>false</dgr>
+              <cargoDesc>Marchandise generale</cargoDesc>
+              <volume>2</volume>
+              <grossWeight>52.33</grossWeight>
+              <packageType>OP</packageType>
+              <pieces>2</pieces>
+              <stackable>false</stackable>
+            </shipmentPosition>
+            <grossWeight>52.33</grossWeight>
+            <volume>2</volume>
+          </shippingInformation>
+          <express>false</express>
+          <foodRelated>false</foodRelated>
+          <heatedTransport>false</heatedTransport>
+          <homeDelivery>false</homeDelivery>
+          <measureUnit>PIECES</measureUnit>
+          <ownPickup>false</ownPickup>
+          <pharmaceuticals>false</pharmaceuticals>
+          <automatedFixDayDeliveryToBeAgreed>false</automatedFixDayDeliveryToBeAgreed>
+          <pharma>false</pharma>
+          <pallet>false</pallet>
+          <weCare>false</weCare>
+          <expressFr>false</expressFr>
+        </bookingLand>
+      </in>
+    </v1:getBookingRequestLand>
+  </soapenv:Body>
+</soapenv:Envelope>

@@ -1,0 +1,228 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://www.schenker.com/Booking/v1_1">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:getBookingRequestLand>
+         <in>
+            <applicationArea>
+               <accessKey>Insert access key here</accessKey>
+               <groupId>Insert user group Id here</groupId>
+               <requestID>Request_2099-12-31_12:00:000</requestID>
+            </applicationArea>
+            <bookingLand submitBooking="true">
+               <barcodeRequest start_pos="1" separated="false" directThermalMedia="false">A4</barcodeRequest>
+               <address>
+                  <contactPerson>
+                     <email>Shipper.Contact.Email@test.com</email>
+                  </contactPerson>
+                  <name1>Shipper Name 1</name1>
+                  <name2>Shipper Name 2</name2>
+                  <vatNo>Shipper_VAT</vatNo>
+                  <customsId>Shipper_CustomsId</customsId>
+                  <email>Shipper.General.Email@test.com</email>
+                  <locationType>PHYSICAL</locationType>
+                  <mobilePhone>555-12345</mobilePhone>
+                  <personType>COMPANY</personType>
+                  <phone>123-456-789</phone>
+                  <postalCode>12345</postalCode>
+                  <schenkerAddressId>SchenkerAddressId_123</schenkerAddressId>
+                  <street>Shipper Street</street>
+                  <city>Shipper City</city>
+                  <countryCode>DE</countryCode>
+                  <type>SHIPPER</type>
+               </address>
+               <address>
+                  <contactPerson>
+                     <email>Consignee.Contact.Email@test.com</email>
+                  </contactPerson>
+                  <name1>Consignee Name 1</name1>
+                  <name2>Consignee Name 2</name2>
+                  <vatNo>Consignee_VAT</vatNo>
+                  <customsId>Consignee_CustomsId</customsId>
+                  <email>Consignee.General.Email@test.com</email>
+                  <locationType>PHYSICAL</locationType>
+                  <mobilePhone>555-12345</mobilePhone>
+                  <personType>COMPANY</personType>
+                  <phone>123-456-789</phone>
+                  <postalCode>23456</postalCode>
+                  <schenkerAddressId>SchenkerAddressId_123</schenkerAddressId>
+                  <street>Consignee Street</street>
+                  <city>Consignee City</city>
+                  <countryCode>DE</countryCode>
+                  <type>CONSIGNEE</type>
+               </address>
+               <address>
+                  <contactPerson>
+                     <email>Pickup.Contact.Email@test.com</email>
+                  </contactPerson>
+                  <name1>Pickup Name 1</name1>
+                  <name2>Pickup Name 2</name2>
+                  <vatNo>Pickup_VAT</vatNo>
+                  <customsId>Pickup_CustomsId</customsId>
+                  <email>Pickup.General.Email@test.com</email>
+                  <locationType>PHYSICAL</locationType>
+                  <mobilePhone>555-12345</mobilePhone>
+                  <personType>COMPANY</personType>
+                  <phone>123-456-789</phone>
+                  <postalCode>34567</postalCode>
+                  <schenkerAddressId>SchenkerAddressId_123</schenkerAddressId>
+                  <street>Pickup Street</street>
+                  <city>Pickup City</city>
+                  <countryCode>DE</countryCode>
+                  <type>PICKUP</type>
+               </address>
+               <address>
+                  <contactPerson>
+                     <email>Delivery.Contact.Email@test.com</email>
+                  </contactPerson>
+                  <name1>Delivery Name 1</name1>
+                  <name2>Delivery Name 2</name2>
+                  <vatNo>Delivery_VAT</vatNo>
+                  <customsId>Delivery_CustomsId</customsId>
+                  <email>Delivery.General.Email@test.com</email>
+                  <locationType>PHYSICAL</locationType>
+                  <mobilePhone>555-12345</mobilePhone>
+                  <personType>COMPANY</personType>
+                  <phone>123-456-789</phone>
+                  <postalCode>45678</postalCode>
+                  <schenkerAddressId>SchenkerAddressId_123</schenkerAddressId>
+                  <street>Delivery Street</street>
+                  <city>Delivery City</city>
+                  <countryCode>DE</countryCode>
+                  <type>DELIVERY</type>
+               </address>
+               <address>
+                  <contactPerson>
+                     <email>Notify.Contact.Email@test.com</email>
+                  </contactPerson>
+                  <name1>Notify Name 1</name1>
+                  <name2>Notify Name 2</name2>
+                  <vatNo>Notify_VAT</vatNo>
+                  <customsId>Notify_CustomsId</customsId>
+                  <email>Notify.General.Email@test.com</email>
+                  <locationType>PHYSICAL</locationType>
+                  <mobilePhone>555-12345</mobilePhone>
+                  <personType>COMPANY</personType>
+                  <phone>123-456-789</phone>
+                  <postalCode>56789</postalCode>
+                  <schenkerAddressId>SchenkerAddressId_123</schenkerAddressId>
+                  <street>Notify Street</street>
+                  <city>Notify City</city>
+                  <countryCode>DE</countryCode>
+                  <type>NOTIFY</type>
+               </address>
+               <address>
+                  <contactPerson>
+                     <email>Invoice.Contact.Email@test.com</email>
+                  </contactPerson>
+                  <name1>Invoice Name 1</name1>
+                  <name2>Invoice Name 2</name2>
+                  <vatNo>Invoice_VAT</vatNo>
+                  <customsId>Invoice_CustomsId</customsId>
+                  <email>Invoice.General.Email@test.com</email>
+                  <locationType>PHYSICAL</locationType>
+                  <mobilePhone>555-12345</mobilePhone>
+                  <personType>COMPANY</personType>
+                  <phone>123-456-789</phone>
+                  <postalCode>67890</postalCode>
+                  <schenkerAddressId>SchenkerAddressId_123</schenkerAddressId>
+                  <street>Invoice Street</street>
+                  <city>Invoice City</city>
+                  <countryCode>DE</countryCode>
+                  <type>INVOICE</type>
+               </address>
+               <incoterm>EXW</incoterm>
+               <incotermLocation>IncotermLocation</incotermLocation>
+               <productCode>43</productCode>
+               <measurementType>METRIC</measurementType>
+               <cargoDescription>GeneralCargoDescription</cargoDescription>
+               <cargoInsurance>
+                  <value>9999.99</value>
+                  <currency>EUR</currency>
+               </cargoInsurance>
+               <cashOnDelivery>
+                  <value>9999.99</value>
+                  <currency>EUR</currency>
+               </cashOnDelivery>
+               <customsClearance>false</customsClearance>
+               <customsClearanceEu>false</customsClearanceEu>
+               <grossWeight>1000</grossWeight>
+               <indoorDelivery>false</indoorDelivery>
+               <pickupDates>
+                  <pickUpDateFrom>2099-01-30T09:00:00.000+00:00</pickUpDateFrom>
+                  <pickUpDateTo>2099-01-30T18:00:00.000+00:00</pickUpDateTo>
+               </pickupDates>
+               <reference>
+                  <number>ShipperReference_123</number>
+                  <id>SHIPPER_REFERENCE_NUMBER</id>
+               </reference>
+               <reference>
+                  <number>ConsigneeReference_123</number>
+                  <id>CONSIGNEE_REFERENCE_NUMBER</id>
+               </reference>
+               <handlingInstructions>HandlingInstructions_ABC</handlingInstructions>
+               <neutralShipping>false</neutralShipping>
+               <specialCargo>false</specialCargo>
+               <valueOfGoods>
+                  <value>9999.99</value>
+                  <currency>EUR</currency>
+               </valueOfGoods>
+               <ecoNeutral>true</ecoNeutral>
+               <serviceType>D2D</serviceType>
+               <shippingInformation>
+                  <shipmentPosition>
+                     <dgr>false</dgr>
+                     <cargoDesc>Shipping Line 1</cargoDesc>
+                     <volume>4</volume>
+                     <grossWeight>400</grossWeight>
+                     <packageType>EP</packageType>
+                     <pieces>3</pieces>
+                     <stackable>true</stackable>
+                  </shipmentPosition>
+                  <shipmentPosition>
+                     <dangerousGoods>
+                        <pieces>2</pieces>
+                        <packageType>00</packageType>
+                        <weightType>KGS</weightType>
+                        <weight>50</weight>
+                        <weightBasis>NET</weightBasis>
+                        <subitems>
+                           <unNo>2345</unNo>
+                           <labelType>LN_3</labelType>
+                           <packageGroup>II</packageGroup>
+                           <shippingName>3-BROMOPROPYNE</shippingName>
+                           <technicalName>Not required</technicalName>
+                           <waste>false</waste>
+                           <exceptedQuantities>false</exceptedQuantities>
+                           <limitedQuantity>false</limitedQuantity>
+                           <marinePollutant>false</marinePollutant>
+                        </subitems>
+                     </dangerousGoods>
+                     <dgr>true</dgr>
+                     <cargoDesc>Shipping Line 2</cargoDesc>
+                     <volume>12</volume>
+                     <grossWeight>600</grossWeight>
+                     <packageType>CI</packageType>
+                     <pieces>5</pieces>
+                     <stackable>false</stackable>
+                  </shipmentPosition>
+                  <grossWeight>1000</grossWeight>
+                  <volume>16</volume>
+               </shippingInformation>
+               <express>false</express>
+               <foodRelated>false</foodRelated>
+               <heatedTransport>false</heatedTransport>
+               <homeDelivery>false</homeDelivery>
+               <measureUnit>VOLUME</measureUnit>
+               <measureUnitVolume>16</measureUnitVolume>
+               <ownPickup>false</ownPickup>
+               <pharmaceuticals>false</pharmaceuticals>
+               <automatedFixDayDeliveryToBeAgreed>true</automatedFixDayDeliveryToBeAgreed>
+               <deliveryPreNoticeEmail>
+                  <contact>John Doe</contact>
+                  <email>Email@test.com</email>
+               </deliveryPreNoticeEmail>
+            </bookingLand>
+         </in>
+      </v1:getBookingRequestLand>
+   </soapenv:Body>
+</soapenv:Envelope>
