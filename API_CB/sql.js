@@ -1,4 +1,5 @@
 module.exports =`SELECT DISTINCT
+		LTRIM(RTRIM(PIDT))												as DatePiece,
 		LTRIM(RTRIM(bl.DEPO))												as depo,
 		LTRIM(RTRIM(bl.PINO))												as BLNumber,
 		LTRIM(RTRIM(BPlignes.BPNO))										as BPno,
@@ -10,7 +11,7 @@ module.exports =`SELECT DISTINCT
 		LTRIM(RTRIM(shipper.LOC))											as ShipperStreet4,
 		LTRIM(RTRIM(shipper.CPOSTAL))										as ShipperPostalCode,
 		LTRIM(RTRIM(shipper.VIL))											as ShipperCity,
-		LTRIM(RTRIM(shipper.PAY))											as ShipperCountryCode,
+		LTRIM(RTRIM(LEFT(shipper.PAY,2)))											as ShipperCountryCode,
 		CONCAT('+33',RIGHT(REPLACE(REPLACE(LTRIM(RTRIM(shipper.TEL)), ' ', ''), '.', ''),9))		as ShipperPhone,
 		LTRIM(RTRIM(shipper.EMAIL))										as ShipperEmail,
 		CASE WHEN shipper.ETB='NPR' THEN '162050'
@@ -24,7 +25,7 @@ module.exports =`SELECT DISTINCT
 		LTRIM(RTRIM(c.LOC))												as DeliveryStreet4,
         LTRIM(RTRIM(c.CPOSTAL))											as DeliveryPostalCode,
         LTRIM(RTRIM(c.VIL))												as DeliveryCity,
-		LTRIM(RTRIM(c.PAY))												as DeliveryCountryCode,
+		LTRIM(RTRIM(LEFT(c.PAY,2)))												as DeliveryCountryCode,
 		CASE WHEN SUBSTRING(LEFT(LTRIM(RTRIM(c.TEL)),2),2,1) in ('6','7')  THEN CONCAT('+33',RIGHT(REPLACE(REPLACE(LTRIM(RTRIM(c.TEL)), ' ', ''), '.', ''),9))
 			ELSE ' ' END
 					as DeliveryMobilePhone,
@@ -48,4 +49,5 @@ module.exports =`SELECT DISTINCT
 	  JOIN MOUV AS mv1 ON mv1.DOS=bl.DOS AND mv1.BLNO=bl.PINO AND mv1.TICOD=bl.TICOD AND mv1.PICOD=bl.PICOD 
 	  LEFT JOIN ETS as shipper ON shipper.DOS=bl.DOS AND shipper.ETB=bl.ETB
 	  LEFT JOIN BPDET as BPlignes ON BPlignes.DOS=mv1.DOS AND BPlignes.CDNO=mv1.CDNO AND BPlignes.REF=mv1.REF AND BPlignes.TIERS=mv1.TIERS
-	  WHERE bl.DOS=7 AND bl.TICOD='C' AND bl.PICOD=3 AND bl.CE4=1 AND bl.PIDT <= GETDATE() AND bl.ETB in ('NPR','SPT') AND bl.DEPO='BRI' AND bl.BLMOD='SHEK'`;
+	  WHERE bl.DOS=7 AND bl.TICOD='C' AND bl.PICOD=3 AND bl.CE4=1 AND bl.PIDT <= GETDATE() AND bl.ETB in ('NPR','SPT') AND bl.DEPO='BRI' AND bl.BLMOD='SHEK'
+	  ORDER BY DatePiece, BLNumber, BPno`;

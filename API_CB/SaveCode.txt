@@ -156,3 +156,4 @@ function mapRowToShipment(row) {
           <measureUnit>${esc(shipment.measureUnit || "PIECES")}</measureUnit>
           <ownPickup>${boolXml(!!shipment.ownPickup)}</ownPickup>
           <pharmaceuticals>${boolXml(!!shipment.pharmaceuticals)}</pharmaceuticals>*/
+          <button onclick="copyToClipboard(${item.id}, 'request')">renvoyer</button>

@@ -15,7 +15,7 @@ const { create } = require('xmlbuilder2'); //serialization json -> xml
 //---fichiers xml---
 const fs = require("fs");
 const path = require("path");
-
+app.use(express.static(path.join(__dirname, "public")));
 function saveXmlToFile(blNumber, xmlContent) {
     const folderPath = path.join(__dirname, "xml");
     console.log(folderPath);
@@ -42,8 +42,10 @@ const connectionString =
     "Trusted_Connection=Yes;" +
     "Encrypt=No;" +
     "TrustServerCertificate=Yes;";
-
-async function test() {
+// -------------------------
+// connexion SQLSERVER pour test (affiche infos serveur, bdd, login) et vérifie que la config est OK
+// -------------------------
+async function connexiontest() {
         try {
             const pool = await sql.connect({connectionString: connectionString,driver: "msnodesqlv8"});
             const result = await pool.request().query(`
@@ -64,7 +66,7 @@ async function test() {
         }
     }
 
-    test();
+    connexiontest();
 // -------------------------
 // Helpers XML
 // -------------------------
@@ -83,74 +85,6 @@ function boolXml(value) {
 }
 
 // -------------------------
-// Construction d'une adresse Schenker
-// Basée sur ton exemple API_Schenker_CB.txt
-// -------------------------
-function buildAddressXml(address) {
-    return `
-    <address>
-      <contactPerson>
-        <name>${esc(address.contactName || "")}</name>
-        <phone>${esc(address.contactPhone || "")}</phone>
-        <email>${esc(address.contactEmail || "")}</email>
-      </contactPerson>
-      <name1>${esc(address.name1)}</name1>
-      <name2>${esc(address.name2 || "")}</name2>
-      <customerAddressIdentifier>${esc(address.customerAddressIdentifier || "")}</customerAddressIdentifier>
-      <vatNo>${esc(address.vatNo || "")}</vatNo>
-      <customsId>${esc(address.customsId || "")}</customsId>
-      <email>${esc(address.email || "")}</email>
-      <fax>${esc(address.fax || "")}</fax>
-      <locationType>${esc(address.locationType || "PHYSICAL")}</locationType>
-      <mobilePhone>${esc(address.mobilePhone || "")}</mobilePhone>
-      <personType>${esc(address.personType || "COMPANY")}</personType>
-      <phone>${esc(address.phone || "")}</phone>
-      <poBox>${esc(address.poBox || "")}</poBox>
-      <postalCode>${esc(address.postalCode || "")}</postalCode>
-      <stateCode>${esc(address.stateCode || "")}</stateCode>
-      <stateName>${esc(address.stateName || "")}</stateName>
-      <preferredLanguage>${esc(address.preferredLanguage || "")}</preferredLanguage>
-      <schenkerAddressId>${esc(address.schenkerAddressId || "")}</schenkerAddressId>
-      <schenkerAddressIdentifier>
-        <type>${esc(address.schenkerAddressIdentifierType || "")}</type>
-        <value>${esc(address.schenkerAddressIdentifierValue || "")}</value>
-      </schenkerAddressIdentifier>
-      <street>${esc(address.street || "")}</street>
-      <street2>${esc(address.street2 || "")}</street2>
-      <city>${esc(address.city || "")}</city>
-      <countryCode>${esc(address.countryCode || "")}</countryCode>
-      <type>${esc(address.type)}</type>
-    </address>
-  `;
-}
-
-// -------------------------
-// Construction SOAP EXACTE dans l'esprit de ton exemple
-// -------------------------
-//function buildSchenkerSoapEnvelope(shipment) {
-  //  const xmlbuilt = create(shipment).end({ prettyPrint: true });
-   // const xmlbuilt = create(shipment).end({ prettyPrint: true });
-  //  return
-    /*`<?xml version="1.0" encoding="UTF-8"?>
-<soapenv: Envelope xmlns:soapenv="${soap_enveloppe}" xmlns:v1="${soap_url}">
-  <soapenv:Header/>
-  <soapenv:Body>
-    <v1:getBookingRequestLand>
-      <in>
-        <applicationArea>
-          <accessKey>${process.env.SCHENKER_ACCESS_KEY}</accessKey>
-          <groupId>${process.env.SCHENKER_GROUP_ID}</groupId>
-        </applicationArea>
-        <bookingLand submitBooking="true">*/
-     //     ${ xmlbuilt }
-      /*  </bookingLand>
-      </in>
-    </v1:getBookingRequestLand>
-  </soapenv:Body>
-</soapenv:Envelope>`*/;
-//}
-
-// -------------------------
 // Lecture SQL SRVSQLDIVA
 // -------------------------
 async function fetchBLToSend() {
@@ -162,7 +96,20 @@ async function fetchBLToSend() {
     //console.table(result.recordset)
     return result.recordset;
 }
-
+async function updateBLSent(row) {
+    
+    const pool = await sql.connect({connectionString,driver: "msnodesqlv8"});
+    await pool.request()
+        .input("BLNO", sql.Int, row.BLNumber)
+        .input("BPNO", sql.Int, row.BPno)
+        .input("DATETRAN", sql.DateTime, new Date())
+        .query(`
+    INSERT INTO BLTRAN (BLNO, BPNO, DATETRAN)
+    VALUES (@BLNO, @BPNO, @DATETRAN)
+  `);
+    //console.table(result.recordset)
+    return result.recordset;
+}
 // -------------------------
 // Mapping SQL -> Schenker
 // -------------------------
@@ -336,15 +283,26 @@ async function processAllBL() {
             
             const responseXml = await sendToSchenker(requestXml); //"XML généré uniquement, non envoyé à Schenker"; //Bypass l'envoi en test
             //saveXmlToFile(row.BLNumber, requestXml);
+            try {
+                  await updateBLSent(row);
+                    successArchivage = true;
+                 } catch (err) {
+                    successArchivage = false;
+                    console.error("Erreur archivage :", err);
+                  }
             results.push({
+                ...row,
                 id: row.Id,
                 blNumber: row.BLNumber,
                 success: true,
                 requestXml,
                 responseXml
             });
+            // archivage
+
         } catch (error) {
             results.push({
+                ...row,
                 id: row.Id,
                 blNumber: row.BLNumber,
                 success: false,
@@ -360,11 +318,12 @@ async function processAllBL() {
 // -------------------------
 // HTML : une DIV par BL
 // -------------------------
-app.get("/", async (req, res) => {
+app.get("/api/bl", async (req, res) => {
     try {
         const results = await processAllBL();
+        res.json(results);
         console.log(results);
-        let html = `
+      /*  let html = `
       <html>
       <head>
         <meta charset="utf-8">
@@ -395,6 +354,7 @@ app.get("/", async (req, res) => {
             html += `
         <div class="bl-card ${item.success ? "success" : "error"}">
           <h2>BL ${esc(item.blNumber)}</h2>
+          <p><strong>ID :</strong> ${esc(item.NumCde)}</p>
           <p><strong>ID :</strong> ${esc(item.id)}</p>
           <p><strong>Statut :</strong> ${item.success ? "Succès" : "Erreur"}</p>
 
@@ -407,6 +367,29 @@ app.get("/", async (req, res) => {
             <summary>XML envoyé</summary>
             <pre>${esc(item.requestXml)}</pre>
           </details>
+          <div>
+            <h2><strong>N°BP</strong>: ${esc(item.BPno)}</h2>
+            <p><strong>Zone:</strong> ${esc(item.BPzone)}</p>
+            <p>Nb Colis: ${esc(item.NbColis)}</p>
+            <p>Nb Pal: ${esc(item.NbPalette)}</p>
+            <p><strong> UM: ${esc(item.UM)} </strong></p>   
+            <p>Poids: ${esc(item.poids)}</p>
+            <p>Volume: ${esc(item.volume)}</p>
+          </div>
+          <div>
+            <h2><strong>Client: </strong> ${esc(item.DeliveryName)}</h2>
+            <p>Adresse: ${esc(item.DeliveryStreet)}</p>
+            <p>Adresse cpl1: ${esc(item.DeliveryStreet2)} </p>
+            <p>Adresse cpl2: ${esc(item.DeliveryStreet3)} </p>
+            <p>Localité: ${esc(item.DeliveryStreet4)} </p>
+            <p>Code Postal: ${esc(item.DeliveryPostalCode)}</p>
+            <p>Ville: ${esc(item.DeliveryCity)}+ '  ' +Pays: ${esc(item.DeliveryCountryCode)}</p>
+            <p>Tel: ${esc(item.DeliveryPhone)}</p>
+            <p>Tel.Port: ${esc(item.DeliveryMobilePhone)}</p>
+            <p>@mail: ${esc(item.DeliveryEmail)}</p>
+            <p>Instruc.Liv: ${esc(item.DeliveryInstruc)}</p>
+            
+          </div>
         </div>
       `;
         }
@@ -416,9 +399,9 @@ app.get("/", async (req, res) => {
       </html>
     `;
 
-        res.send(html);
+        res.send(html);*/
     } catch (err) {
-        res.status(500).send("Erreur serveur : " + err.message);
+        res.status(500).json("Erreur serveur : " + err.message);
     }
 });
 
