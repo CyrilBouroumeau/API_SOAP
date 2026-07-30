@@ -10,7 +10,11 @@ const port = process.env.PORT || 3000;
 const soap_url = process.env.SOAP_URL;
 const soap_enveloppe = process.env.SOAP_ENVELOPPE;
 const soap_namespace = process.env.SOAP_NAMESPACE;
+const printerIp = process.env.PRINTER_IP;
+const printerPort = Number(process.env.PRINTER_PORT || 9100);
 console.log(soap_url);
+console.log("Imprimante Zebra :", printerIp);
+console.log("Port :", printerPort);
 const { create } = require('xmlbuilder2'); //serialization json -> xml
 //---fichiers xml---
 const fs = require("fs");
@@ -18,6 +22,20 @@ const path = require("path");
 
 //--parseur réponse SOAP XML -> JSON (pour affichage dans console)
 const { XMLParser } = require("fast-xml-parser");
+
+// -------------------------
+// Test config imprimante
+// -------------------------
+
+if (!process.env.PRINTER_IP) {
+    throw new Error(
+        "PRINTER_IP n'est pas défini dans le fichier .env"
+    );
+}
+
+// -------------------------
+// sauvegarde des fichiers xml construits pour archivage
+// -------------------------
 
 app.use(express.static(path.join(__dirname, "public")));
 function saveXmlToFile(blNumber, xmlContent) {
@@ -272,6 +290,66 @@ async function sendToSchenker(xml) {
     console.table(response.data);
     return response.data;
 }
+// -------------------------
+// Recupération des étiquettes PDF
+// -------------------------
+function findFirstStringByKey(obj, wantedKeys) {
+    if (!obj || typeof obj !== "object") return null;
+
+    for (const [key, value] of Object.entries(obj)) {
+        if (wantedKeys.includes(key) && typeof value === "string" && value.trim()) {
+            return value;
+        }
+
+        if (typeof value === "object") {
+            const found = findFirstStringByKey(value, wantedKeys);
+            if (found) return found;
+        }
+    }
+
+    return null;
+}
+
+function extractLabelFromSoapResponse(responseXml) {
+    const parser = new XMLParser({
+        ignoreAttributes: false,
+        parseTagValue: true,
+        trimValues: true
+    });
+
+    const parsed = parser.parse(responseXml);
+
+    // Selon le retour Schenker, le champ peut s'appeler différemment.
+    // On cherche plusieurs noms plausibles.
+    const labelBase64 = findFirstStringByKey(parsed, [
+        "barcode",
+        "label",
+        "labelData",
+        "barcodeData",
+        "document",
+        "content"
+    ]);
+
+    return {
+        parsed,
+        labelBase64
+    };
+}
+
+function savePdfLabel(blNumber, labelBase64) {
+    if (!labelBase64) return null;
+
+    const folderPath = path.join(__dirname, "labels");
+    if (!fs.existsSync(folderPath)) {
+        fs.mkdirSync(folderPath);
+    }
+
+    const filePath = path.join(folderPath, `ETIQUETTE_${blNumber}.pdf`);
+    fs.writeFileSync(filePath, Buffer.from(labelBase64, "base64"));
+
+    return filePath;
+}
+
 
 // -------------------------
 // Traitement : 1 ligne SQL = 1 enveloppe SOAP
@@ -292,7 +370,14 @@ async function processAllBL() {
                 //saveXmlToFile(row.BLNumber, requestXml);
                 try {
                     await updateBLSent(row);
-                     successArchivage = true;
+                    successArchivage = true;
+                    const { labelBase64 } = extractLabelFromSoapResponse(responseXml);
+
+                    if (labelBase64) {
+                        const buffer = Buffer.from(labelBase64, "base64");
+                        const filePath = savePdfLabel(row.BLNumber, labelBase64);
+                        await printToPrinter(printerIp, printerPort, buffer);
+                    }
                 } catch (err) {
                      successArchivage = false;
                     console.error("Erreur archivage :", err);
