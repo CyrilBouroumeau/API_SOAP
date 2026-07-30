@@ -15,6 +15,10 @@ const { create } = require('xmlbuilder2'); //serialization json -> xml
 //---fichiers xml---
 const fs = require("fs");
 const path = require("path");
+
+//--parseur réponse SOAP XML -> JSON (pour affichage dans console)
+const { XMLParser } = require("fast-xml-parser");
+
 app.use(express.static(path.join(__dirname, "public")));
 function saveXmlToFile(blNumber, xmlContent) {
     const folderPath = path.join(__dirname, "xml");
@@ -275,21 +279,30 @@ async function sendToSchenker(xml) {
 async function processAllBL() {
     const rows = await fetchBLToSend();
     const results = [];
-
+    let requestXml = "";
+    let responseXml = "";
+    let successArchivage = false;
     for (const row of rows) {
         try {
-            const requestXml = mapRowToShipment(row);
-           // const requestXml = buildSchenkerSoapEnvelope(shipment);
+            if (row.PositionSent === 1) {         //si non envoyé on envoie à schenker
+                requestXml = mapRowToShipment(row); //SQL BL en cours
+               // const requestXml = buildSchenkerSoapEnvelope(shipment);
             
-            const responseXml = await sendToSchenker(requestXml); //"XML généré uniquement, non envoyé à Schenker"; //Bypass l'envoi en test
-            //saveXmlToFile(row.BLNumber, requestXml);
-            try {
-                  await updateBLSent(row);
-                    successArchivage = true;
-                 } catch (err) {
-                    successArchivage = false;
+                responseXml = await sendToSchenker(requestXml); //"XML généré uniquement, non envoyé à Schenker"; //Bypass l'envoi en test
+                //saveXmlToFile(row.BLNumber, requestXml);
+                try {
+                    await updateBLSent(row);
+                     successArchivage = true;
+                } catch (err) {
+                     successArchivage = false;
                     console.error("Erreur archivage :", err);
-                  }
+                }
+            } else {
+                console.log(`BL ${row.BLNumber} déjà envoyé, pas de nouvel envoi.`);
+                const responseXml = "BL déjà envoyé";
+            }
+
+
             results.push({
                 ...row,
                 id: row.Id,
@@ -299,6 +312,7 @@ async function processAllBL() {
                 responseXml
             });
             // archivage
+  
 
         } catch (error) {
             results.push({

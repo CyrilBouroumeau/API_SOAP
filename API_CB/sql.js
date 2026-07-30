@@ -1,9 +1,10 @@
 module.exports =`SELECT DISTINCT
-		LTRIM(RTRIM(PIDT))												as DatePiece,
+		LTRIM(RTRIM(BLsent.BLTRAN_ID))											as Id,
+		LTRIM(RTRIM(PIDT))													as DatePiece,
 		LTRIM(RTRIM(bl.DEPO))												as depo,
 		LTRIM(RTRIM(bl.PINO))												as BLNumber,
-		LTRIM(RTRIM(BPlignes.BPNO))										as BPno,
-		LTRIM(RTRIM(LEFT(BPlignes.LIEU,5)))								as BPzone,	
+		LTRIM(RTRIM(BPlignes.BPNO))											as BPno,
+		LTRIM(RTRIM(LEFT(BPlignes.LIEU,5)))									as BPzone,	
 		LTRIM(RTRIM(shipper.NOM))											as ShipperName,
 		LTRIM(RTRIM(shipper.RUE))											as ShipperStreet,
 		LTRIM(RTRIM(shipper.ADRCPL1))										as ShipperStreet2,
@@ -43,11 +44,13 @@ module.exports =`SELECT DISTINCT
 		CAST(bl.UPAL AS DECIMAL(10,2))									as NbPalette,
 		CAST(bl.COLINB + bl.UPAL AS DECIMAL(10,2))								as UM,
 		CAST(bl.POITOT AS DECIMAL(10,2))									as poids,
-		CAST(bl.VOLTOT AS DECIMAL(10,2))									as volume
+		CAST(bl.VOLTOT AS DECIMAL(10,2))									as volume,
+		CASE WHEN LTRIM(RTRIM(BLsent.BLNO))<>' ' THEN 2 ELSE 1 END			as PositionSent
 	  FROM ENT bl
 	  LEFT JOIN CLI AS c ON c.DOS=bl.DOS AND c.TIERS=bl.TIERS
 	  JOIN MOUV AS mv1 ON mv1.DOS=bl.DOS AND mv1.BLNO=bl.PINO AND mv1.TICOD=bl.TICOD AND mv1.PICOD=bl.PICOD 
 	  LEFT JOIN ETS as shipper ON shipper.DOS=bl.DOS AND shipper.ETB=bl.ETB
 	  LEFT JOIN BPDET as BPlignes ON BPlignes.DOS=mv1.DOS AND BPlignes.CDNO=mv1.CDNO AND BPlignes.REF=mv1.REF AND BPlignes.TIERS=mv1.TIERS
+	  LEFT JOIN BLTRAN as BLsent ON BLsent.BLNO=bl.PINO AND BLsent.BPNO=BPlignes.BPNO
 	  WHERE bl.DOS=7 AND bl.TICOD='C' AND bl.PICOD=3 AND bl.CE4=1 AND bl.PIDT <= GETDATE() AND bl.ETB in ('NPR','SPT') AND bl.DEPO='BRI' AND bl.BLMOD='SHEK'
 	  ORDER BY DatePiece, BLNumber, BPno`;
